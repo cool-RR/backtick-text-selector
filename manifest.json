@@ -1,9 +1,9 @@
 {
   "id": "backtick-text-selector",
-  "name": "Backtick Text Selector",
-  "version": "1.0.1",
+  "name": "Backtick text selector",
+  "version": "1.0.2",
   "minAppVersion": "0.15.0",
   "description": "Select text between backticks with keyboard shortcuts.",
-  "author": "Your Name",
+  "author": "ram@rachum.com",
   "isDesktopOnly": false
 }
