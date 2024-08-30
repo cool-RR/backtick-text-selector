@@ -1,12 +1,12 @@
 // main.js
-module.exports = class MyPlugin extends require('obsidian').Plugin {
+module.exports = class BacktickTextSelector extends require('obsidian').Plugin {
     onload() {
-        console.log("Loading MyPlugin");
+        console.log("Loading backtick-text-selector");
         this.addCommands();
     }
 
     onunload() {
-        console.log("Unloading MyPlugin");
+        console.log("Unloading backtick-text-selector");
     }
 
     addCommands() {
