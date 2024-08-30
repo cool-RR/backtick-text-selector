@@ -12,7 +12,7 @@ module.exports = class BacktickTextSelector extends require('obsidian').Plugin {
     addCommands() {
         this.addCommand({
             id: 'select-next-backtick',
-            name: 'Select Next Backtick Text',
+            name: 'Select next backtick text',
             hotkeys: [
                 {
                     modifiers: ["Alt"],
@@ -26,7 +26,7 @@ module.exports = class BacktickTextSelector extends require('obsidian').Plugin {
 
         this.addCommand({
             id: 'select-previous-backtick',
-            name: 'Select Previous Backtick Text',
+            name: 'Select previous backtick text',
             hotkeys: [
                 {
                     modifiers: ["Alt", "Shift"],
