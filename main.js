@@ -16,7 +16,7 @@ module.exports = class BacktickTextSelector extends require('obsidian').Plugin {
             hotkeys: [
                 {
                     modifiers: ["Alt"],
-                    key: "\'",
+                    key: "'",
                 }
             ],
             editorCallback: (editor) => {
@@ -39,38 +39,44 @@ module.exports = class BacktickTextSelector extends require('obsidian').Plugin {
         });
     }
 
-    getBacktickSpans(text) {
-        const regex = /`([^`]+)`/g;
-        let match;
-        const spans = [];
-
-        while ((match = regex.exec(text)) !== null) {
-            spans.push([match.index + 1, match.index + match[0].length - 1]);
-        }
-
-        return spans;
-    }
-
     selectBacktickText(editor, direction) {
-        const doc = editor;
-        const cursor = doc.getCursor();
-        const text = doc.getValue();
-        const cursorPos = doc.posToOffset(cursor);
-        const spans = this.getBacktickSpans(text);
+        const cursor = editor.getCursor();
+        const doc = editor.getDoc();
+        const cursorPos = doc.indexFromPos(cursor);
+        const regex = /`([^`]+)`/g;
+        let searchCursor;
 
-        let index;
         if (direction === 'next') {
-            index = spans.findIndex(span => span[0] > cursorPos);
+            searchCursor = editor.getSearchCursor(regex, cursor);
+            if (searchCursor.findNext()) {
+                let from = searchCursor.from();
+                let to = searchCursor.to();
+                // Adjust to exclude backticks
+                from.ch += 1;
+                to.ch -= 1;
+                editor.getDoc().setSelection(from, to);
+            }
         } else {
-            index = spans.slice().reverse().findIndex(span => span[1] < cursorPos);
-            if (index !== -1) index = spans.length - 1 - index;
-        }
-
-        if (index !== -1 && spans[index]) {
-            let startPos = doc.offsetToPos(spans[index][0]);
-            let endPos = doc.offsetToPos(spans[index][1]);
-            startPos.ch += 0.5;
-            doc.setSelection(startPos, endPos);
+            // For previous, we need to find all matches before the cursor
+            searchCursor = editor.getSearchCursor(regex, { line: 0, ch: 0 });
+            let lastMatch = null;
+            while (searchCursor.findNext()) {
+                if (doc.indexFromPos(searchCursor.to()) >= cursorPos) {
+                    break;
+                }
+                lastMatch = {
+                    from: searchCursor.from(),
+                    to: searchCursor.to(),
+                };
+            }
+            if (lastMatch) {
+                let from = lastMatch.from;
+                let to = lastMatch.to;
+                // Adjust to exclude backticks
+                from.ch += 1;
+                to.ch -= 1;
+                editor.getDoc().setSelection(from, to);
+            }
         }
     }
 };
